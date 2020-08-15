@@ -1,6 +1,7 @@
 version: 2
-	jobs:
-		build:
+
+jobs:
+	build:
 		docker:
 			# specify the version you desire here
 			- image: circleci/node:8.11
@@ -9,7 +10,7 @@ version: 2
 
 		steps:
 			- checkout
-
+      
 			# Download and cache dependencies
 			- restore_cache:
 				keys:
