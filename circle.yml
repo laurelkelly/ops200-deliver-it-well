@@ -1,24 +1,29 @@
-deploy:
-docker:
-  - image: circleci/node:14.4.0
-    environment:
-      HEROKU_APP_NAME: ops200-deliver-it-well
-      HEROKU_API_KEY: 02242461-a48c-4ffd-8e2e-393ee8ca576c
-steps:
-  - checkout
-  - run:
-    name: Deploy Master to Heroku
-    command: |
-    git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+version: 2.1
+
+orbs:
+  heroku: circleci/heroku@1.2.1 # Invoke the Heroku orb
 
 workflows:
-version: 2
-build-deploy:
-  jobs:
-    - build
-    - deploy:
-      requires:
+  heroku_deploy:
+    jobs:
       - build
-      filters:
-      branches:
-        only: master
+      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
+          requires:
+            - build
+          filters:
+            branches:
+              only: sequential-branch-filter
+jobs:
+  build:
+    docker:
+      - image: circleci/node:12.x
+    working_directory: ~/projects/ops200-deliver-it-well
+    steps:
+      - checkout
+      # Bundle install dependencies
+      - run: bundle install --path vendor/bundle
+      # Database setup
+      - run: bundle exec rake db:create db:schema:load
+      - run:
+          name: Run tests
+          command: rake
