@@ -1,31 +1,24 @@
-version: 2
-  jobs:
-    build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:14.4.0
-        environment:
-          HEROKU_APP_NAME: ops200-deliver-it-well
-          HEROKU_API_KEY: 02242461-a48c-4ffd-8e2e-393ee8ca576c
-
-working_directory: ~/repo
-
+deploy:
+docker:
+  - image: circleci/node:14.4.0
+    environment:
+      HEROKU_APP_NAME: ops200-deliver-it-well
+      HEROKU_API_KEY: 02242461-a48c-4ffd-8e2e-393ee8ca576c
 steps:
-- checkout
+  - checkout
+  - run:
+    name: Deploy Master to Heroku
+    command: |
+    git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
 
-# Download and cache dependencies
-- restore_cache:
-keys:
-- v1-dependencies-{{ checksum "package.json" }}
-# fallback to using the latest cache if no exact match is found
-- v1-dependencies-
-
-- run: yarn install
-
-- save_cache:
-paths:
-- node_modules
-key: v1-dependencies-{{ checksum "package.json" }}
-
-# run tests!
-- run: yarn test 
+workflows:
+version: 2
+build-deploy:
+  jobs:
+    - build
+    - deploy:
+      requires:
+      - build
+      filters:
+      branches:
+        only: master
