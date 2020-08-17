@@ -1,16 +1,18 @@
-version: 2
-
-jobs:
-	build:
+version: 2.1
+	jobs:
+		build:
 		docker:
 			# specify the version you desire here
-			- image: circleci/node:8.11
+			- image: circleci/node:14.4.0
+        environment:
+            HEROKU_APP_NAME: ops200-deliver-it-well
+            HEROKU_API_KEY: 02242461-a48c-4ffd-8e2e-393ee8ca576c
 
 		working_directory: ~/repo
 
 		steps:
 			- checkout
-      
+
 			# Download and cache dependencies
 			- restore_cache:
 				keys:
@@ -26,4 +28,4 @@ jobs:
 				key: v1-dependencies-{{ checksum "package.json" }}
 
 			# run tests!
-			- run: yarn test
+			- run: yarn test 
