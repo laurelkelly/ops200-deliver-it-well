@@ -1,6 +1,6 @@
 deploy:
 docker:
-  - image: circleci/node:14.4.0
+  - image: circleci/node:12.x
     environment:
       HEROKU_APP_NAME: ops200-deliver-it-well
       HEROKU_API_KEY: 02242461-a48c-4ffd-8e2e-393ee8ca576c
@@ -9,7 +9,7 @@ steps:
   - run:
     name: Deploy Master to Heroku
     command: |
-    git push https://heroku:/$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+    git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
 workflows:
 version: 2
 build-deploy:
